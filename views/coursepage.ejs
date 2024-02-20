@@ -1,0 +1,457 @@
+<% layout('layouts/boilerplate') %>
+
+<div class="container my-5 vh-100">
+  <div class="mb-5 pt-5 pb-1 coloor1">
+    <div class="row d-flex align-items-center">
+      <div class="col-6">
+        <% if (course && course.name) { %> <% if(user.type==='Teacher' ||
+        user.type ==='teacherAssistant') { %>
+
+        <button
+          id="members-btn"
+          style="background-color: transparent; padding: 6px"
+        >
+          <i class="fa-solid fa-users fa-2xl" style="color: #d40886"> </i>
+        </button>
+        <% } %>
+        <h2
+          class="ml-2 text-white"
+          style="display: inline"
+          data-i18n="<%= course.name %>"
+        >
+          t<%= course.name %>
+        </h2>
+        <% } %>
+      </div>
+      <div class="col-1 offset-4">
+        <a
+          class="btn btn-primary call-button"
+          href="/coursepage/<%= course._id %>/<%= roomLink %>"
+          target="_blank"
+        >
+          <i class="fa-solid fa-play"></i>
+        </a>
+      </div>
+    </div>
+    <hr />
+    <div class="row d-flex justify-content-center align-items-center">
+      <div class="col-6">
+        <ul class="d-flex justify-content-between align-items-center mt-2">
+          <li>
+            ><button class="btn btn-warning" id="syllabus-btn">
+              <span class="" data-i18n="syllabus"></span>
+            </button>
+          </li>
+
+          <li>
+            <button class="btn btn-warning" id="assignments-btn">
+              <span class="" data-i18n="grades"></span>
+            </button>
+          </li>
+          <li>
+            <% if (course && course._id) { %>
+            <form
+              action="/coursepage/<%=course._id%>?_method=DELETE"
+              method="POST"
+            >
+              <button class="btn btn-danger">
+                <span class="text-white" data-i18n="unenroll"></span>
+              </button>
+            </form>
+
+            <% } %>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <div id="syllabus-modal" class="modal">
+    <div class="modal-content">
+      <span id="close-syllabus" class="close ml-auto">&times;</span>
+      <div class="container d-flex justify-content-center py-3">
+        <% if (course && course.syllabus) { %> <% if (course && course._id) { %>
+        <% const courseId = course._id.toString() %> <% const coursePointsObj =
+        user.totalWeightedPoints.find(obj => obj.course.toString() === courseId)
+        %> <% const coursePoints = coursePointsObj ? coursePointsObj.points : 0
+        %>
+        <table>
+          <tr>
+            <th>Type</th>
+            <th>Percentage</th>
+          </tr>
+          <tr>
+            <td>Assignments</td>
+            <td><%= course.syllabus.assignments %></td>
+          </tr>
+          <tr>
+            <td>Quizzes</td>
+            <td><%= course.syllabus.quizzes %></td>
+          </tr>
+          <tr>
+            <td>Labs</td>
+            <td><%= course.syllabus.labs %></td>
+          </tr>
+          <tr>
+            <td>Attendance</td>
+            <td><%= course.syllabus.attendance %></td>
+          </tr>
+          <tr>
+            <td>Project</td>
+            <td><%= course.syllabus.project %></td>
+          </tr>
+          <tr>
+            <td>Bonus</td>
+            <td><%= course.syllabus.bonus %></td>
+          </tr>
+          <tr>
+            <td>Midterm</td>
+            <td><%= course.syllabus.midterm %></td>
+          </tr>
+          <tr>
+            <td>Final</td>
+            <td><%= course.syllabus.final %></td>
+          </tr>
+          <tr>
+            <td>Total</td>
+            <td>100</td>
+          </tr>
+          <tr>
+            <td>Your total</td>
+            <td><%= coursePoints %></td>
+          </tr>
+        </table>
+      </div>
+
+      <div
+        class="progress my-4"
+        role="progressbar"
+        aria-label="Danger striped example"
+        aria-valuenow="100"
+        aria-valuemin="0"
+        aria-valuemax="100"
+      >
+        <div
+          class="progress-bar progress-bar-striped bg-info"
+          id="progress-bar"
+          style="width: <%= coursePoints %>%"
+        >
+          <div class="cmarker"></div>
+          <div class="bmarker"></div>
+          <div class="amarker"></div>
+          <span class="text-black"> <%= coursePoints %> % </span>
+
+          <div class="cmarker-text">Pass</div>
+          <div class="bmarker-text">B</div>
+          <div class="amarker-text">A</div>
+        </div>
+      </div>
+
+      <% } %> <% } %>
+    </div>
+  </div>
+  <div id="assignments-modal" class="modal">
+    <div class="modal-content">
+      <span id="close-assignments" class="close ml-auto">&times;</span>
+      <div class="d-flex ml-5 justify-content-center flex-column py-3">
+        <% if (assignments) { %>
+        <table>
+          <tr>
+            <th>Name</th>
+            <th>Type</th>
+            <th>Due Date</th>
+            <th>Points</th>
+          </tr>
+
+          <% for (assignment of assignments) { %>
+          <tr>
+            <td><%= assignment.title %></td>
+            <td><%= assignment.type %></td>
+            <td><%= assignment.dueDate %></td>
+            <td>
+              <% if (assignment.submissions.length > 0) { %><%=
+              assignment.submissions[0].points %> / 100 <% } else { %>No
+              submissions yet <% } %>
+            </td>
+          </tr>
+
+          <% } %> <% } %>
+        </table>
+      </div>
+    </div>
+  </div>
+  <div id="members-modal" class="modal">
+    <div class="modal-content">
+      <span id="close-members" class="close ml-auto">&times;</span>
+      <div class="d-flex ml-5 justify-content-center flex-column py-3">
+        <% if (course && course.name) { %> <% const sortedUsers = users
+        .filter(u => u.courses.includes(course._id)) .map(u => { const courseId
+        = course._id.toString(); const coursePointsObj =
+        u.totalWeightedPoints.find(obj => obj.course.toString() === courseId);
+        const coursePoints = coursePointsObj ? coursePointsObj.points : 0;
+        return { user: u, coursePoints }; }) .sort((a, b) => b.coursePoints -
+        a.coursePoints); %>
+        <table>
+          <tr>
+            <th>Name</th>
+            <th>Points</th>
+            <th>Action</th>
+          </tr>
+          <% for (entry of sortedUsers) { %> <% const u = entry.user; %> <%
+          const coursePoints = entry.coursePoints; %>
+          <tr>
+            <td><%= u.first %> <%= u.last %></td>
+            <td><%= coursePoints %></td>
+            <td>
+              <% if (u.completedCourses.includes(course._id) ) { %>
+              <span class="text-success">Passed</span>
+              <form
+                style="display: inline; margin-left: 20px"
+                action="/coursepage/<%= course._id %>/<%=u._id%>/undo?_method=PUT"
+                method="POST"
+              >
+                <input type="hidden" name="courseId" value="<%= course._id%>" />
+                <input type="hidden" name="userId" value="<%= u._id%> " />
+                <button class="btn btn-danger">Undo</button>
+              </form>
+
+              <% } else {%>
+
+              <form
+                action="/coursepage/<%= course._id %>/<%=u._id%>/pass?_method=PUT"
+                method="POST"
+              >
+                <input type="hidden" name="courseId" value="<%= course._id%>" />
+                <input type="hidden" name="userId" value="<%= u._id%> " />
+                <button class="btn btn-success">Mark As Passed</button>
+              </form>
+              <% } %> <% if(user.type === 'Teacher') { %> <% if(u.type
+              ==='Student') { %>
+              <form
+                action="/coursepage/<%= course._id %>/<%=u._id%>/ta?_method=PUT"
+                method="POST"
+                style="margin-top: 10px"
+              >
+                <input type="hidden" name="courseId" value="<%= course._id%>" />
+                <input type="hidden" name="userId" value="<%= u._id%> " />
+                <button class="btn btn-info">Hire as Teaching Assistant</button>
+              </form>
+              <% } else if (u.type ==='Teaching Assistant') { %>
+              <form
+                action="/coursepage/<%= course._id %>/<%=u._id%>/tau?_method=PUT"
+                method="POST"
+                style="margin-top: 10px"
+              >
+                <input type="hidden" name="courseId" value="<%= course._id%>" />
+                <input type="hidden" name="userId" value="<%= u._id%> " />
+                <button class="btn btn-info">
+                  Revert from Teaching assistant to student
+                </button>
+              </form>
+
+              <% }} %>
+            </td>
+          </tr>
+
+          <% }} %>
+        </table>
+      </div>
+    </div>
+  </div>
+  <% if (course && course.posts) { for (let post of course.posts) { %>
+
+  <div class="d-flex flex-column mb-5" id="comment-container">
+    <div class="coloor3">
+      <% if(user.type ==='Teacher') { %>
+      <form
+        action="/coursepage/<%=course._id%>/post/<%=post._id%>?_method=DELETE"
+        method="POST"
+      >
+        <div class="d-flex ml-auto">
+          <button class="btn btn-danger text-white ml-auto">&times;</button>
+        </div>
+      </form>
+      <% } %>
+      <div class="flex-row d-flex">
+        <img
+          src="<%= post.author.profilePicture  %>"
+          width="50"
+          height="50"
+          class="rounded-circle"
+        />
+        <div class="d-flex flex-column justify-content-start ml-2">
+          <span class="d-block font-weight-bold name">
+            <%= post.author.first %> <%= post.author.last %>
+          </span>
+          <span class="date text-black-50"
+            ><%= new Date(post.date).toLocaleString('en-US', { timeZone: 'UTC',
+            dateStyle: 'short', timeStyle: 'short' }) %></span
+          >
+        </div>
+      </div>
+      <div class="mt-3">
+        <p class="comment-text"><%= post.content %></p>
+      </div>
+    </div>
+    <hr />
+  </div>
+  <% } } else { %>
+  <p>No posts found for this course.</p>
+  <% } %>
+</div>
+<div class="row">
+  <div class="col-md-12" id="wow">
+    <div class="container p-3" id="wow-container">
+      <% if(course && course._id) { %>
+      <form action="/coursepage/<%=course._id%>" method="POST">
+        <div class="row">
+          <div class="col-md-9">
+            <textarea
+              class="form-control"
+              name="content"
+              id="content"
+              cols="30"
+              rows="3"
+            ></textarea>
+          </div>
+          <div class="col-md-2">
+            <button class="btn btn-primary mt-4 px-5">Post</button>
+          </div>
+        </div>
+      </form>
+      <% } %>
+    </div>
+  </div>
+</div>
+
+<style>
+  body {
+    background-color: #f1faee;
+  }
+  .coloor1 {
+    background-color: #1d3557;
+    border-radius: 40px;
+    text-align: center;
+  }
+  .coloor2 {
+    background-color: #457b9d;
+    border-radius: 40px;
+  }
+  .coloor3 {
+    color: #f1faee;
+  }
+  form {
+    margin: 0;
+    padding: 0;
+  }
+  .cmarker {
+    content: "";
+    position: absolute;
+
+    bottom: 6.3%;
+    left: 60%;
+    width: 3px;
+    height: 18px;
+    background-color: rgb(255, 0, 0);
+  }
+  .bmarker {
+    position: absolute;
+    bottom: 6.3%;
+    right: 25%;
+    width: 3px;
+    height: 18px;
+    background-color: rgb(199, 186, 5);
+  }
+  .amarker {
+    position: absolute;
+    bottom: 6.3%;
+    right: 10%;
+    width: 3px;
+    height: 18px;
+    background-color: rgb(4, 199, 85);
+  }
+
+  .cmarker-text {
+    position: absolute;
+    bottom: 12%;
+    left: 60%;
+    transform: translateX(-50%);
+    color: black;
+    padding: 2px 4px;
+    font-size: 12px;
+    border-radius: 4px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12), 0 1px 2px rgba(0, 0, 0, 0.24);
+  }
+  .bmarker-text {
+    position: absolute;
+    bottom: 12%;
+    right: 24.8%;
+    color: black;
+    padding: 2px 4px;
+    font-size: 12px;
+    border-radius: 4px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12), 0 1px 2px rgba(0, 0, 0, 0.24);
+  }
+  .amarker-text {
+    position: absolute;
+    bottom: 12%;
+    right: 9.8%;
+    color: black;
+    padding: 2px 4px;
+    font-size: 12px;
+    border-radius: 4px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12), 0 1px 2px rgba(0, 0, 0, 0.24);
+  }
+</style>
+
+<script>
+  const syllabusBtn = document.querySelector("#syllabus-btn");
+  const assignmentsBtn = document.querySelector("#assignments-btn");
+  const membersBtn = document.querySelector("#members-btn");
+  const syllabusModal = document.querySelector("#syllabus-modal");
+  const assignmentsModal = document.querySelector("#assignments-modal");
+  const membersModal = document.querySelector("#members-modal");
+  const closeSyllabusModal = document.querySelector("#close-syllabus");
+  const closeAssignmentsModal = document.querySelector("#close-assignments");
+  const closeMembersModal = document.querySelector("#close-members");
+
+  syllabusBtn.addEventListener("click", () => {
+    syllabusModal.style.display = "block";
+  });
+
+  closeSyllabusModal.addEventListener("click", () => {
+    syllabusModal.style.display = "none";
+  });
+
+  window.addEventListener("click", (event) => {
+    if (event.target == syllabusModal) {
+      syllabusModal.style.display = "none";
+    }
+  });
+
+  assignmentsBtn.addEventListener("click", () => {
+    assignmentsModal.style.display = "block";
+  });
+
+  closeAssignmentsModal.addEventListener("click", () => {
+    assignmentsModal.style.display = "none";
+  });
+
+  window.addEventListener("click", (event) => {
+    if (event.target == assignmentsModal) {
+      assignmentsModal.style.display = "none";
+    }
+  });
+  membersBtn.addEventListener("click", () => {
+    membersModal.style.display = "block";
+  });
+  closeMembersModal.addEventListener("click", () => {
+    membersModal.style.display = "none";
+  });
+
+  window.addEventListener("click", (event) => {
+    if (event.target == membersModal) {
+      membersModal.style.display = "none";
+    }
+  });
+</script>

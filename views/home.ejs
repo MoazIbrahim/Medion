@@ -1,0 +1,112 @@
+<% layout('layouts/boilerplate') %>
+<section class="announcements-container">
+  <form action="/home" method="POST">
+    <% if (user.type !== 'Student') {%>
+    <div class="post-box container">
+      <textarea
+        name="content"
+        id="content"
+        placeholder="Make An Announcement ... "
+      ></textarea>
+
+      <div class="post-buttons">
+        <button class="post-button btn btn-primary">Post</button>
+      </div>
+    </div>
+    <% } else { %>
+    <div class="post-box container disabled">
+      <textarea
+        name="content"
+        id="content"
+        placeholder="Make An Announcement ... "
+        disabled
+      ></textarea>
+
+      <div class="post-buttons">
+        <button class="post-button btn btn-primary" disabled>
+          <span class="text-white" data-i18n="announcements-post"></span>
+        </button>
+      </div>
+    </div>
+    <% } %>
+  </form>
+  <div class="container d-flex justify-content-center align-items-center">
+    <section class="news-carousel container">
+      <div class="slideshow-container">
+        <% if (announcements.length > 0) { %> <% for (announcement of
+        announcements) {%>
+        <div class="mySlides">
+          <q class="text-white"><%= announcement.content %></q>
+          <p class="author text-primary">
+            - <%= announcement.author.first %> <%= announcement.author.last %>
+          </p>
+        </div>
+        <% } %> <% } else { %>
+        <div class="mySlides">
+          <q class="text-white">There are no new announcements at the moment</q>
+          <p class="author text-primary">- Medipol Secretary %></p>
+        </div>
+        <% } %>
+
+        <a class="prev" onclick="plusSlides(-1)">&#10094;</a>
+        <a class="next" onclick="plusSlides(1)">&#10095;</a>
+        <div class="dot-container">
+          <% for(announcement of announcements) { %>
+          <span class="dot" onclick="currentSlide(1)"></span>
+          <% } %>
+        </div>
+      </div>
+    </section>
+  </div>
+</section>
+
+<section class="px-2 container sched">
+  <table>
+    <% const days = ["Mon", "Tue", "Wed", "Thu", "Fri"]; %>
+    <thead>
+      <tr>
+        <th data-i18n="schedule-days"></th>
+        <% for (let i = 9; i < 17; i++) { %>
+        <th><%= i %>:00 - <%= i+1 %>:00</th>
+        <% } %>
+      </tr>
+    </thead>
+    <tbody>
+      <% for (let j = 0; j < 5; j++) { %>
+      <tr>
+        <td><%= days[j] %></td>
+        <% for (let i = 9; i < 17; i++) { %>
+        <td class="sch-card">
+          <% const cellDay = days[j]; %> <% for (let enrolledCourse of
+          enrolledCourses) { %> <% if (typeof enrolledCourse !== 'undefined') {
+          %> <% const [slotStart, slotEnd] = [i, i+1]; %> <% const [courseStart,
+          courseEnd] = enrolledCourse.time.time.split('-').map(s =>
+          parseInt(s.split(':')[0])); %> <% if (enrolledCourse.time.day ===
+          cellDay && courseStart <= slotStart && courseEnd >= slotEnd) { %>
+          <p data-i18n="<%= enrolledCourse.name %>">
+            t<%= enrolledCourse.name %>
+          </p>
+          <% } %> <% } %> <% } %>
+        </td>
+        <% } %>
+      </tr>
+      <% } %>
+    </tbody>
+  </table>
+  <div id="myModal" class="modal">
+    <div class="modal-content">
+      <span class="close">&times;</span>
+      <h2 id="modal-heading"></h2>
+      <p id="modal-notes"></p>
+    </div>
+  </div>
+</section>
+
+<style>
+  body {
+    background-color: #f1faee;
+  }
+  .disabled {
+    background-color: rgba(239, 239, 239, 0.3);
+  }
+</style>

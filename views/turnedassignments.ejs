@@ -1,0 +1,90 @@
+<% layout('layouts/boilerplate') %>
+<div class="container my-3">
+  <div class="my-5">
+    <% if (assignment && assignment.title) { %>
+    <h1>Submissions of assignment <%= assignment.title %></h1>
+    <% } %>
+  </div>
+  <div class="d-flex flex-wrap">
+    <% var submissionsPerRow = 3; var groupedSubmissions = []; for (var i = 0; i
+    < submissions.length; i += submissionsPerRow) {
+    groupedSubmissions.push(submissions.slice(i, i + submissionsPerRow)); }
+    groupedSubmissions.forEach(function(submissionsInRow) { %>
+
+    <div class="row mb-3">
+      <% submissionsInRow.forEach(function(submission) { %>
+
+      <div class="col-sm-4">
+        <div class="card text-white gradcolor mb-3">
+          <%= submission.points %>
+          <div
+            class="card-header d-flex justify-content-between align-items-center"
+          >
+            <%= submission.student.username %> <% if
+            (submission.plagiarismPercentage) { %>
+            <span class="badge badge-pill badge-warning">
+              <%= submission.plagiarismPercentage.toFixed(2) %>%
+            </span>
+            <% } %>
+
+            <form
+              action="/assignments/<%= assignment._id %>/submissions/<%= submission._id %>/points"
+              method="POST"
+            >
+              <input
+                class="form-control"
+                type="number"
+                name="points"
+                id="points"
+                placeholder="/100"
+                style="max-width: 5rem"
+              />
+              <button class="btn btn-md btn-success mt-2">Return</button>
+            </form>
+          </div>
+          <div class="card-body">
+            <h5 class="card-title">
+              Submitted by <%= submission.student.first %> <%=
+              submission.student.last %> at <%=
+              submission.submissionDate.toLocaleString('en-US') %>
+            </h5>
+            <% submission.solutionFiles.forEach(function(file) { %>
+            <div class="mx-5">
+              <a href="<%= file.url %>"
+                ><img class="mt-5 thumbn" src="/pdficon.png" alt=""
+              /></a>
+              <p class="text-white mt-2"><%= file.filename %></p>
+            </div>
+            <% }) %>
+          </div>
+        </div>
+      </div>
+      <% }) %>
+    </div>
+    <% }) %>
+  </div>
+</div>
+<style>
+  body {
+    background-color: #f1faee;
+  }
+  .card {
+    min-width: 350px;
+  }
+  .thumbn {
+    width: 150px;
+    height: 150px;
+    background-color: white;
+    border: 3px solid rgb(238, 5, 5);
+    border-radius: 20px;
+    transition: 0.3s;
+  }
+  .thumbn:hover {
+    transform: scale(1.05);
+  }
+  .vl {
+    margin-top: 50px;
+    border-right: 2px solid rgb(45, 46, 45);
+    height: 400px;
+  }
+</style>

@@ -1,0 +1,83 @@
+<% layout('layouts/boilerplate') %>
+<div class="container boxed mt-5">
+  <div class="row">
+    <div class="col-6 offset-3">
+      <form action="/edit/<%=userEdit._id%>?_method=PUT" method="POST">
+        <div class="mb-3">
+          <label class="form-label" for="first">First</label>
+          <input
+            class="form-control"
+            type="text"
+            id="first"
+            name="first"
+            value="<%=userEdit.first %>"
+            required
+          />
+        </div>
+        <div class="mb-3">
+          <label class="form-label" for="last">Last</label>
+          <input
+            class="form-control"
+            type="text"
+            id="last"
+            name="last"
+            value="<%=userEdit.last %>"
+            required
+          />
+        </div>
+        <div class="mb-3">
+          <label class="form-label" for="username">Username</label>
+          <input
+            class="form-control"
+            type="text"
+            id="username"
+            name="username"
+            value="<%=userEdit.username %>"
+            required
+          />
+        </div>
+        <div class="mb-3">
+          <label class="form-label" for="type">Type</label>
+          <select class="form-control" name="type" id="type">
+            <option value="Student"<% if(userEdit.type==='Student'){ %> selected <%}%>>Student</option>
+            <option value="Teacher"<% if(userEdit.type==='Teacher'){ %> selected <%}%>>Teacher</option>
+            <option value="Teaching Assistant"<% if(userEdit.type==='Teaching Assistant'){ %> selected <%}%>>Teaching Assistant</option>
+            <option value="Admin"<% if(userEdit.type==='Admin'){ %> selected <%}%>>Admin</option>
+           
+          </select>
+        </div>
+
+        <div class="mb-3">
+          <label class="form-label" for="year">Year</label>
+          <select class="form-control" name="year" id="year">
+            <option value="1"<% if(userEdit.year===1){ %> selected <%}%>>1</option>
+            <option value="2"<% if(userEdit.year===2){ %> selected <%}%>>2</option>
+            <option value="3"<% if(userEdit.year===3){ %> selected <%}%>>3</option>
+            <option value="4"<% if(userEdit.year===4){ %> selected <%}%>>4</option>
+          </select>
+        </div>
+        <div class="mb-3">
+          <label class="form-label" for="semester">Semester</label>
+          <select class="form-control" name="semester" id="semester">
+            <option value="Fall"<% if(userEdit.semester==='Fall'){ %> selected <%}%>>Fall</option>
+            <option value="Spring"<% if(userEdit.semester==='Spring'){ %> selected <%}%>>Spring</option>
+            <option value="Summer"<% if(userEdit.semester==='Summer'){ %> selected <%}%>>Summer</option>
+          </select>
+        </div>
+        <div class="mb-3">
+          <label class="form-label" for="department">Department</label>
+          <select class="form-control" name="department" id="department">
+            <option value="Computer Engineering"<% if(userEdit.department==='Computer Engineering'){ %> selected <%}%>>Computer Engineering</option>
+            <option value="Electrical Engineering"<% if(userEdit.department==='Electrical Engineering'){ %> selected <%}%>>Electrical Engineering</option>
+            <option value="Biomedical Engineering"<% if(userEdit.department==='Biomedical Engineering'){ %> selected <%}%>>Biomedical Engineering</option>
+            <option value="Civil Engineering"<% if(userEdit.department==='Civil Engineering'){ %> selected <%}%>>Civil Engineering</option>
+            <option value="Industrial Engineering"<% if(userEdit.department==='Industrial Engineering'){ %> selected <%}%>>Industrial Engineering</option>
+          </select>
+        </div>
+        <div class="mb-3">
+          <button class="btn btn-info">Confirm</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>

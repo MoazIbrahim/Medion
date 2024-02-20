@@ -1,0 +1,265 @@
+
+* {
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Poppins', sans-serif;
+    margin: 0;
+    padding: 0;
+}
+
+
+.chat-container {
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+    background-color: #e5e5e5;
+   
+}
+
+
+.chat-header{
+    display: flex;
+        align-items: center;
+        background-color: #0b3778;
+        color: #fff;
+        padding: 10px;
+}
+.participants {
+    display: flex;
+   margin-top: 10px;
+    justify-content: flex-start;
+    width: 100%;
+}
+.call-buttons-xd { 
+    display: flex;
+justify-content: flex-end;
+width: 100%;
+}
+
+.chat-header h1 {
+    font-size: 24px;
+    margin: 0;
+}
+
+
+
+.call-btn:hover {
+    background-color: #06a;
+    transition: all 0.3s ease-in-out;
+}
+
+
+.senders-bar {
+    display: flex-right;
+    justify-content: space-between;
+    align-items: end;
+    background-color: #0b3778;
+    padding: 10px;
+}
+
+
+.senders-bar ul {
+    list-style: none;
+    display: flex;  
+}
+.wow { 
+display: inline-block;
+align-items: center;
+
+}
+
+.senders-bar ul li {
+    margin-right: 10px;
+}
+
+.senders-bar ul li:last-child {
+    margin-right: 0;
+}
+
+.senders-bar ul li.active img {
+    border: 2px solid #333;
+}
+
+.chat-box {
+    flex-grow: 1;
+
+    overflow-y: auto;
+    padding: 10px;
+    background-image: url(/assets/output-onlinepngtools.png  );
+}
+
+.message {
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 10px;
+}
+
+.message p {
+    margin: 0;
+    padding: 10px;
+    border-radius: 5px;
+    max-width: 80%;
+}
+
+.message.sent p {
+    background-color: #333;
+    color: #fff;
+    align-self: flex-end;
+}
+
+.message.received p {
+    background-color: #f2f2f2;
+    color: #333;
+    align-self: flex-start;
+}
+.message.received span {
+    
+    align-self: flex-start;
+}
+
+.message.another-sender p {
+    background-color: #3498db;
+    color: #fff;
+    align-self: flex-start;
+}
+
+.message span {
+    font-size: 12px;
+    color: #aaa;
+    text-align: right;
+    margin-top: 5px;
+}
+
+
+.message-input {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: #f2f2f2;
+    padding: 10px;
+}
+
+.message-input input[type="text"] {
+    flex-grow: 1;
+    border: none;
+    padding: 10px;
+    border-radius: 5px;
+    margin-right: 10px;
+}
+
+.message-input button {
+    background-color: #333;
+    color: #fff;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.message-input button:hover {
+    background-color: #555;
+}
+
+
+.profile-pic {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+}
+aside{
+	width:370px;
+	height:960px;
+    background-color: #0b3778;
+	display:inline-block;
+	font-size:15px;
+	vertical-align:top;
+}
+main{
+	width:490px;
+	height:800px;
+	display:inline-block;
+	font-size:15px;
+	vertical-align:top;
+}
+
+aside header{
+	padding:30px 20px;
+}
+aside input{
+	width:70%;
+	height:50px;
+	line-height:50px;
+	padding:0 50px 0 20px;
+	background-color:#5e616a;
+	border:none;
+	border-radius:3px;
+	color:#fff;
+	background-image:url(https://s3-us-west-2.amazonaws.com/s.cdpn.io/1940306/ico_search.png);
+	background-repeat:no-repeat;
+	background-position:170px;
+	background-size:40px;
+}
+aside input::placeholder{
+	color:#fff;
+}
+aside ul{
+	padding-left:0;
+	margin:0;
+	list-style-type:none;
+	overflow-y:scroll;
+	height:690px;
+}
+aside li{
+	padding:30px 0;
+}
+aside li:hover{
+	background-color:#5e616a;
+    cursor: pointer;
+}
+h2,h3{
+	margin:0;
+}
+aside li img{
+    max-width: 50px;
+    max-height: 50px;
+	border-radius:50%;
+	margin-left:20px;
+	margin-right:8px;
+}
+aside li div{
+	display:inline-block;
+	vertical-align:top;
+	margin-top:12px;
+}
+aside li h2{
+	font-size:14px;
+	color:#fff;
+	font-weight:normal;
+	margin-bottom:5px;
+}
+aside li h3{
+	font-size:12px;
+	color:#7e818a;
+	font-weight:normal;
+}
+
+.status{
+	width:8px;
+	height:8px;
+	border-radius:50%;
+	display:inline-block;
+	margin-right:7px;
+}
+.green{
+	background-color:#58b666;
+}
+.orange{
+	background-color:#ff725d;
+}
+.blue{
+	background-color:#6fbced;
+	margin-right:0;
+	margin-left:7px;
+}

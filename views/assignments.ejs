@@ -1,0 +1,721 @@
+<% layout('layouts/boilerplate') %>
+<nav
+  class="container bruh nav nav-pills flex-column flex-sm-row mt-5"
+  id="myTab"
+  role="tablist"
+>
+  <a
+    class="flex-sm-fill text-sm-center text-primary nav-link active"
+    href="#due-assignments"
+    data-bs-toggle="pill"
+    role="tab"
+    aria-controls="due-assignments"
+    aria-selected="true"
+    data-i18n="due-assignments"
+  ></a>
+  <a
+    class="flex-sm-fill text-sm-center text-primary nav-link"
+    href="#past-due-assignments"
+    data-bs-toggle="pill"
+    role="tab"
+    aria-controls="past-due-assignments"
+    aria-selected="false"
+    data-i18n="past-due-assignments"
+  ></a>
+  <a
+    class="flex-sm-fill text-sm-center text-muted nav-link"
+    href="#survey"
+    data-bs-toggle="pill"
+    role="tab"
+    aria-controls="survey"
+    aria-selected="false"
+    data-i18n="surveys"
+  ></a>
+  <% if (user.type !== 'Student') { %>
+  <button
+    id="add-assignment-btn"
+    data-target="add-assignment-modal"
+    class="btn btn-primary mr-3"
+  >
+    +
+  </button>
+  <% } %>
+</nav>
+<div id="add-assignment-modal" class="modal">
+  <div class="modal-content">
+    <span class="close">&times;</span>
+    <form action="/assignments" method="POST" enctype="multipart/form-data">
+      <div class="form-group my-3">
+        <label class="form-label" for="title">Title</label>
+        <input class="form-control" type="text" name="title" id="title" />
+      </div>
+      <div class="input-group my-3">
+        <label class="form-label" for="type">Type</label>
+        <select class="form-control" name="type" id="type">
+          <option value="Assignment">Assignment</option>
+          <option value="Lab Assignment">Lab Assignment</option>
+          <option value="Quiz">Quiz</option>
+          <option value="Project">Project</option>
+          <option value="Midterm">Midterm</option>
+          <option value="Final">Final</option>
+        </select>
+      </div>
+      <div class="input-group mb-3">
+        <div class="custom-file">
+          <input
+            type="file"
+            class="custom-file-input"
+            id="assignmentfiles"
+            name="assignmentfiles"
+            multiple
+          />
+          <label
+            class="custom-file-label"
+            for="assignmentfiles"
+            aria-describedby="inputGroupFileAddon02"
+            >Choose file</label
+          >
+        </div>
+        <div class="input-group-append">
+          <span class="input-group-text" id="inputGroupFileAddon02"
+            >Upload</span
+          >
+        </div>
+      </div>
+
+      <div class="form-group my-3">
+        <label class="form-label" for="description">Description</label>
+        <br />
+        <textarea
+          name="description"
+          id="description"
+          class="form-control"
+          cols="80"
+          rows="4"
+        ></textarea>
+      </div>
+      <div class="form-group my-3">
+        <label class="form-label" for="dueDate">Due Date</label>
+        <input
+          class="form-control"
+          type="datetime-local"
+          name="dueDate"
+          id="dueDate"
+        />
+      </div>
+      <div class="form-group my-3">
+        <label class="form-label" for="course">Course</label>
+        <select class="form-control" name="course" id="course">
+          <% for(course of courses) { %>
+          <option value="<%= course._id  %>"><%= course.name %></option>
+
+          <%} %>
+        </select>
+      </div>
+
+      <button class="btn btn-success">Add Assignment</button>
+    </form>
+  </div>
+</div>
+
+<div class="tab-content" id="myTabContent">
+  <div
+    class="tab-pane fade show active"
+    id="due-assignments"
+    role="tabpanel"
+    aria-labelledby="due-assignments-tab"
+  >
+    <div class="container vh-100 mt-3 assignment-bg">
+      <% let currentDate = Date.now(); %> <% for (assignment of assignments) {
+      %>
+
+      <div class="question">
+        <button class="question-toggle d-flex justify-content-around mt-3">
+          <span class="ml-2 text-white">
+            <% const selectedCourse = courses.find(c => c._id &&
+            assignment.course && c._id.toString() ===
+            assignment.course.toString()); %>
+            <span class="text-white" data-i18n="<%= selectedCourse.name %>">
+              t<%= selectedCourse ? selectedCourse.name : "Course not found" %>
+            </span>
+            <%= assignment.title %>
+          </span>
+          <span class="text-white" data-i18n="<%= assignment.type %>">
+            <%= t(assignment.type) %></span
+          >
+          <div>
+            <span class="text-white" data-i18n="Due"> </span>
+            <span class="text-white">
+              <%= assignment.dueDate.toLocaleString().replace('T',' ') %></span
+            >
+          </div>
+        </button>
+
+        <div class="answer">
+          <% if (user.type === 'Teacher') { %>
+          <div class="mr-auto my-3">
+            <a href=" <%= `assignments/${assignment._id}`  %> ">
+              <button class="btn btn-warning ml-auto">
+                Turned In Assignments
+              </button></a
+            >
+          </div>
+          <hr />
+          <% } %>
+
+          <span class="form-label mb-3"> <%= assignment.description %> </span>
+
+          <br />
+          <hr />
+          <div class="d-flex">
+            <% for(let file of assignment.assignmentfiles) { %>
+            <div class="mx-5">
+              <a href=" <%= file.url  %> "
+                ><img class="mt-5 thumbn" src="/pdficon.png" alt=""
+              /></a>
+              <p class="text-danger mt-2"><%= file.filename %></p>
+            </div>
+
+            <% } %>
+          </div>
+          <hr />
+          <form
+            action=" <%= `/assignments/${assignment._id}/submit`  %> "
+            method="POST"
+            enctype="multipart/form-data"
+          >
+            <div class="input-group mb-3">
+              <div class="custom-file">
+                <input
+                  type="file"
+                  class="custom-file-input"
+                  id="solutionFiles"
+                  name="solutionFiles"
+                  multiple
+                />
+                <label
+                  class="custom-file-label"
+                  for="solutionFiles"
+                  aria-describedby="inputGroupFileAddon02"
+                  >Choose file</label
+                >
+              </div>
+              <button class="btn btn-success">Upload</button>
+            </div>
+          </form>
+          <% if (user.type !== 'Student') { %>
+          <button
+            id=""
+            data-target="edit-assignment-modal"
+            class="btn btn-primary d-flex edit-assignment-btn ml-auto my-3"
+          >
+            Modify
+          </button>
+          <% } %>
+          <div id="" class="modal edit-assignment-modal">
+            <div class="modal-content">
+              <span class="close">&times;</span>
+              <form
+                action="/assignments/<%= assignment._id  %>?_method=PUT"
+                method="POST"
+                enctype="multipart/form-data"
+              >
+                <div class="form-group my-3">
+                  <label class="form-label" for="title">Title</label>
+                  <input
+                    class="form-control"
+                    type="text"
+                    name="title"
+                    id="title"
+                    value="<%= assignment.title  %>"
+                  />
+                </div>
+                <div class="form-group my-3">
+                  <label class="form-label" for="description"
+                    >Description</label
+                  >
+                  <br />
+                  <textarea
+                    name="description"
+                    id="description"
+                    class="form-control"
+                    cols="80"
+                    rows="4"
+                  ></textarea>
+                  <div class="input-group my-3">
+                    <div class="custom-file">
+                      <input
+                        type="file"
+                        class="custom-file-input"
+                        id="assignmentfiles"
+                        name="assignmentfiles"
+                        multiple
+                      />
+                      <label
+                        class="custom-file-label"
+                        for="assignmentfiles"
+                        aria-describedby="inputGroupFileAddon02"
+                        >Choose file</label
+                      >
+                    </div>
+                    <div class="input-group-append">
+                      <span
+                        class="input-group-text btn btn-success"
+                        id="inputGroupFileAddon02"
+                        >Upload</span
+                      >
+                    </div>
+                  </div>
+                  <div class="form-group my-3">
+                    <label class="form-label" for="dueDate">Due Date</label>
+                    <input
+                      class="form-control"
+                      type="datetime-local"
+                      name="dueDate"
+                      id="dueDate"
+                      value="<%= assignment.dueDate  %>"
+                    />
+                  </div>
+                  <div class="form-group my-3">
+                    <label class="form-label" for="course">Course</label>
+                    <select class="form-control" name="course" id="course">
+                      <% for(course of courses) { %>
+                      <option value="<%= course._id  %>">
+                        <%= course.name %>
+                      </option>
+
+                      <%} %>
+                    </select>
+                  </div>
+                </div>
+
+                <button class="btn btn-success mr-auto">Modify</button>
+              </form>
+            </div>
+          </div>
+          <% if (user.type !== 'Student') { %>
+          <form
+            action="/assignments/<%= assignment._id  %>?_method=DELETE"
+            method="POST"
+            class="d-flex justify-content-end mt-3"
+          >
+            <button class="btn btn-danger">Delete</button>
+          </form>
+          <% } %>
+        </div>
+      </div>
+      <% }%>
+    </div>
+  </div>
+  <div
+    class="tab-pane fade"
+    id="past-due-assignments"
+    role="tabpanel"
+    aria-labelledby="past-due-assignments-tab"
+  >
+    <div class="container vh-100 mt-3 assignment-bg">
+      <% for(passignment of pastAssignments) { %>
+
+      <div class="question">
+        <button class="question-toggle d-flex justify-content-around mt-3">
+          <span class="ml-2 text-white">
+            <% const selectedCourse = courses.find(c => c._id &&
+            passignment.course && c._id.toString() ===
+            passignment.course.toString()); %>
+            <span class="text-white" data-i18n="<%= selectedCourse.name %>">
+              t<%= selectedCourse ? selectedCourse.name : "Course not found" %>
+            </span>
+            <%= passignment.title %>
+          </span>
+          <span class="text-white" data-i18n="<%= passignment.type %>">
+            <%= t(passignment.type) %></span
+          >
+          <div>
+            <span class="text-white" data-i18n="Due"> </span>
+            <span class="text-white">
+              <%= passignment.dueDate.toLocaleString().replace('T',' ') %></span
+            >
+          </div>
+        </button>
+
+        <div class="answer">
+          <% if (user.type === 'Teacher') { %>
+          <div class="mr-auto my-3">
+            <a href=" <%= `assignments/${passignment._id}`  %> ">
+              <button class="btn btn-warning ml-auto">
+                Turned In Assignments
+              </button></a
+            >
+          </div>
+          <hr />
+          <% } %>
+
+          <span class="form-label mb-3"> <%= passignment.description %> </span>
+
+          <br />
+          <hr />
+          <div class="d-flex">
+            <% for(let file of passignment.assignmentfiles) { %>
+            <div class="mx-5">
+              <a href=" <%= file.url  %> "
+                ><img class="mt-5 thumbn" src="/pdficon.png" alt=""
+              /></a>
+              <p class="text-danger mt-2"><%= file.filename %></p>
+            </div>
+
+            <% } %>
+          </div>
+          <hr />
+          <form
+            action=" <%= `/assignments/${passignment._id}/submit`  %> "
+            method="POST"
+            enctype="multipart/form-data"
+          >
+            <div class="input-group mb-3">
+              <div class="custom-file">
+                <input
+                  type="file"
+                  class="custom-file-input"
+                  id="solutionFiles"
+                  name="solutionFiles"
+                  multiple
+                />
+                <label
+                  class="custom-file-label"
+                  for="solutionFiles"
+                  aria-describedby="inputGroupFileAddon02"
+                  >Choose file</label
+                >
+              </div>
+              <button class="btn btn-success">Upload</button>
+            </div>
+          </form>
+          <% if (user.type !== 'Student') { %>
+          <button
+            id=""
+            data-target="edit-assignment-modal"
+            class="btn btn-primary d-flex edit-assignment-btn ml-auto my-3"
+          >
+            Modify
+          </button>
+          <% } %>
+          <div id="" class="modal edit-assignment-modal">
+            <div class="modal-content">
+              <span class="close">&times;</span>
+              <form
+                action="/assignments/<%= passignment._id  %>?_method=PUT"
+                method="POST"
+                enctype="multipart/form-data"
+              >
+                <div class="form-group my-3">
+                  <label class="form-label" for="title">Title</label>
+                  <input
+                    class="form-control"
+                    type="text"
+                    name="title"
+                    id="title"
+                    value="<%= passignment.title  %>"
+                  />
+                </div>
+                <div class="form-group my-3">
+                  <label class="form-label" for="description"
+                    >Description</label
+                  >
+                  <br />
+                  <textarea
+                    name="description"
+                    id="description"
+                    class="form-control"
+                    cols="80"
+                    rows="4"
+                  ></textarea>
+                  <div class="input-group my-3">
+                    <div class="custom-file">
+                      <input
+                        type="file"
+                        class="custom-file-input"
+                        id="assignmentfiles"
+                        name="assignmentfiles"
+                        multiple
+                      />
+                      <label
+                        class="custom-file-label"
+                        for="assignmentfiles"
+                        aria-describedby="inputGroupFileAddon02"
+                        >Choose file</label
+                      >
+                    </div>
+                    <div class="input-group-append">
+                      <span
+                        class="input-group-text btn btn-success"
+                        id="inputGroupFileAddon02"
+                        >Upload</span
+                      >
+                    </div>
+                  </div>
+                  <div class="form-group my-3">
+                    <label class="form-label" for="dueDate">Due Date</label>
+                    <input
+                      class="form-control"
+                      type="datetime-local"
+                      name="dueDate"
+                      id="dueDate"
+                      value="<%= passignment.dueDate  %>"
+                    />
+                  </div>
+                  <div class="form-group my-3">
+                    <label class="form-label" for="course">Course</label>
+                    <select class="form-control" name="course" id="course">
+                      <% for(course of courses) { %>
+                      <option value="<%= course._id  %>">
+                        <%= course.name %>
+                      </option>
+
+                      <%} %>
+                    </select>
+                  </div>
+                </div>
+
+                <button class="btn btn-success mr-auto">Modify</button>
+              </form>
+            </div>
+          </div>
+          <% if (user.type !== 'Student') { %>
+          <form
+            action="/assignments/<%= passignment._id  %>?_method=DELETE"
+            method="POST"
+            class="d-flex justify-content-end mt-3"
+          >
+            <button class="btn btn-danger">Delete</button>
+          </form>
+          <% } %>
+        </div>
+      </div>
+      <% }%>
+    </div>
+  </div>
+  <div class="tab-pane fade" id="survey">
+    <div class="container vh-100 mt-3 assignment-bg">
+      <div class="question">
+        <% for(course of user.courses) { %>
+        <button class="question-toggle mt-3 d-flex justify-content-between">
+          <span class="ml-2 text-white"> <%= course.name %> Survey</span>
+
+          <span class="mr-3 text-white">
+            Score is <%= course.surveyPoints %> Points , Students completed the
+            survey <%= course.surveyUser.length %> Students</span
+          >
+        </button>
+        <div class="answer">
+          <span class="form-label mb-3"> Complete the survey </span>
+          <form action="/assignments/<%= course._id %>/survey" method="POST">
+            <div class="form-group mt-3">
+              <label for="q1">The Course Objectives were clear </label>
+              <div>
+                <label class="radio-inline"
+                  ><input type="radio" name="q1" value="1" />Strongly
+                  Disagree</label
+                >
+                <label class="radio-inline"
+                  ><input type="radio" name="q1" value="2" />Disagree</label
+                >
+                <label class="radio-inline"
+                  ><input type="radio" name="q1" value="3" />Moderate</label
+                >
+                <label class="radio-inline"
+                  ><input type="radio" name="q1" value="4" />Agree</label
+                >
+                <label class="radio-inline"
+                  ><input type="radio" name="q1" value="5" />Strongly
+                  Agree</label
+                >
+              </div>
+            </div>
+            <div class="form-group mt-3">
+              <label for="q2">
+                The assignments given were at the level of expectations
+              </label>
+              <div>
+                <label class="radio-inline"
+                  ><input type="radio" name="q2" value="1" />Strongly
+                  Disagree</label
+                >
+                <label class="radio-inline"
+                  ><input type="radio" name="q2" value="2" />Disagree</label
+                >
+                <label class="radio-inline"
+                  ><input type="radio" name="q2" value="3" />Moderate</label
+                >
+                <label class="radio-inline"
+                  ><input type="radio" name="q2" value="4" />Agree</label
+                >
+                <label class="radio-inline"
+                  ><input type="radio" name="q2" value="5" />Strongly
+                  Agree</label
+                >
+              </div>
+            </div>
+            <div class="form-group mt-3">
+              <label for="q3"
+                >Teacher assistants were helpful and helped you throughout the
+                course ?
+              </label>
+              <div>
+                <label class="radio-inline"
+                  ><input type="radio" name="q3" value="1" />Strongly
+                  Disagree</label
+                >
+                <label class="radio-inline"
+                  ><input type="radio" name="q3" value="2" />Disagree</label
+                >
+                <label class="radio-inline"
+                  ><input type="radio" name="q3" value="3" />Moderate</label
+                >
+                <label class="radio-inline"
+                  ><input type="radio" name="q3" value="4" />Agree</label
+                >
+                <label class="radio-inline"
+                  ><input type="radio" name="q3" value="5" />Strongly
+                  Agree</label
+                >
+              </div>
+            </div>
+            <div class="form-group mt-3">
+              <label for="q4"
+                >The slides or textbook prepared by the professor was clear
+              </label>
+              <div>
+                <label class="radio-inline"
+                  ><input type="radio" name="q4" value="1" />Strongly
+                  Disagree</label
+                >
+                <label class="radio-inline"
+                  ><input type="radio" name="q4" value="2" />Disagree</label
+                >
+                <label class="radio-inline"
+                  ><input type="radio" name="q4" value="3" />Moderate</label
+                >
+                <label class="radio-inline"
+                  ><input type="radio" name="q4" value="4" />Agree</label
+                >
+                <label class="radio-inline"
+                  ><input type="radio" name="q4" value="5" />Strongly
+                  Agree</label
+                >
+              </div>
+            </div>
+            <button class="btn btn-success">Submit</button>
+          </form>
+        </div>
+        <% } %>
+      </div>
+    </div>
+  </div>
+  <script>
+    $(document).ready(function () {
+      bsCustomFileInput.init();
+    });
+  </script>
+  <script>
+    var tabs = document.querySelectorAll(".nav-link");
+    tabs.forEach(function (tab) {
+      tab.addEventListener("click", function (event) {
+        event.preventDefault();
+        var activeTab = document.querySelector(".nav-link.active");
+        activeTab.classList.remove("active");
+        tab.classList.add("active");
+        var target = document.querySelector(tab.getAttribute("href"));
+        var activeTabContent = document.querySelector(".tab-pane.show.active");
+        activeTabContent.classList.remove("show", "active");
+        target.classList.add("show", "active");
+      });
+    });
+  </script>
+  <script>
+    const questionToggles = document.querySelectorAll(".question-toggle");
+
+    questionToggles.forEach((toggle) => {
+      toggle.addEventListener("click", () => {
+        const answer = toggle.nextElementSibling;
+        answer.classList.toggle("show");
+      });
+    });
+  </script>
+  <script>
+    const addAssignmentBtns = document.querySelectorAll("#add-assignment-btn");
+    const editAssignmentBtns = document.querySelectorAll(
+      ".edit-assignment-btn"
+    );
+    const addAssignmentModals = document.querySelectorAll(
+      "#add-assignment-modal"
+    );
+    const editAssignmentModals = document.querySelectorAll(
+      ".edit-assignment-modal"
+    );
+    const closeAddModals = document.querySelectorAll(".close");
+    const closeEditModals = document.querySelectorAll(".close");
+
+    addAssignmentBtns.forEach((btn, index) => {
+      const addAssignmentModal = addAssignmentModals[index];
+      btn.addEventListener("click", () => {
+        addAssignmentModal.style.display = "block";
+      });
+      closeAddModals[index].addEventListener("click", () => {
+        addAssignmentModal.style.display = "none";
+      });
+      window.addEventListener("click", (event) => {
+        if (event.target == addAssignmentModal) {
+          addAssignmentModal.style.display = "none";
+        }
+      });
+    });
+
+    editAssignmentBtns.forEach((btn, index) => {
+      const editAssignmentModal = editAssignmentModals[index];
+      btn.addEventListener("click", () => {
+        editAssignmentModal.style.display = "block";
+      });
+      closeEditModals[index].addEventListener("click", () => {
+        editAssignmentModal.style.display = "none";
+      });
+      window.addEventListener("click", (event) => {
+        if (event.target == editAssignmentModal) {
+          editAssignmentModal.style.display = "none";
+        }
+      });
+    });
+  </script>
+  <style>
+    body {
+      background-color: #f1faee;
+    }
+    .active {
+      color: white;
+    }
+    .assignment-bg {
+      background-color: #f1faee;
+      border-radius: 10px;
+    }
+    .nav-pills .nav-link.active {
+      background-color: #d1d8df;
+    }
+    label {
+      color: black;
+      font-weight: bold;
+    }
+    form {
+      margin-bottom: 0;
+    }
+    .thumbn {
+      width: 150px;
+      height: 150px;
+      background-color: white;
+      border: 3px solid rgb(238, 5, 5);
+      border-radius: 20px;
+      transition: 0.3s;
+    }
+    .thumbn:hover {
+      transform: scale(1.05);
+    }
+  </style>
+</div>

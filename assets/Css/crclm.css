@@ -1,0 +1,46 @@
+body {
+    font-family: "Poppins", sans-serif;
+}
+
+h1 {
+    margin-bottom: 50px;
+    font-weight: bold;
+}
+
+label {
+    margin-right: 10px;
+}
+
+select {
+    margin-right: 20px;
+}
+
+button {
+    margin-top: 20px;
+}
+
+#courses {
+    margin-top: 20px;
+}
+
+body {
+    background-color: rgb(152, 194, 194);
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+th {
+    background-color: #ddd;
+    text-align: left;
+    padding: 10px;
+}
+
+
+
+td {
+    padding: 10px;
+    border: 1px solid #ddd;
+}

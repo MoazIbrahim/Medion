@@ -1,0 +1,79 @@
+<% layout('layouts/boilerplate') %>
+<div
+  class="coursespagecontainer container justify-content-center align-items-center flex-row"
+>
+  <div class="row mb-3 mt-3">
+    <% const displayedCourses = new Set(); %> <% for (course of user.courses) {
+    if (!displayedCourses.has(course._id)) { %> <%
+    displayedCourses.add(course._id); %>
+    <div class="col-3 mt-5">
+      <a href="/coursepage/<%= course._id  %>">
+        <button class="btn gradcolor boxed wf hf">
+          <svg
+            class="mb-5"
+            xmlns="http://www.w3.org/2000/svg"
+            viewBox="0 0 576 512"
+            width="100"
+            height="100"
+          >
+            <!--! Font Awesome Pro 6.3.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license (Commercial License) Copyright 2023 Fonticons, Inc. -->
+            <path
+              fill="#caf0f8"
+              d="M249.6 471.5c10.8 3.8 22.4-4.1 22.4-15.5V78.6c0-4.2-1.6-8.4-5-11C247.4 52 202.4 32 144 32C93.5 32 46.3 45.3 18.1 56.1C6.8 60.5 0 71.7 0 83.8V454.1c0 11.9 12.8 20.2 24.1 16.5C55.6 460.1 105.5 448 144 448c33.9 0 79 14 105.6 23.5zm76.8 0C353 462 398.1 448 432 448c38.5 0 88.4 12.1 119.9 22.6c11.3 3.8 24.1-4.6 24.1-16.5V83.8c0-12.1-6.8-23.3-18.1-27.6C529.7 45.3 482.5 32 432 32c-58.4 0-103.4 20-123 35.6c-3.3 2.6-5 6.8-5 11V456c0 11.4 11.7 19.3 22.4 15.5z"
+            />
+          </svg>
+          <br />
+          <span class="text-white" data-i18n="<%= course.name %>">
+            t<%= course.name %></span
+          >
+          <div
+            class="progress my-4"
+            role="progressbar"
+            aria-label="Danger striped example"
+            aria-valuenow="100"
+            aria-valuemin="0"
+            aria-valuemax="100"
+          >
+            <div
+              class="progress-bar progress-bar-striped bg-info"
+              id="progress-bar"
+              style="width: <%= course.progression %>%"
+            >
+              <span class="text-black"> <%= course.progression %> % </span>
+            </div>
+          </div>
+        </button>
+      </a>
+    </div>
+    <% } %> <% } %>
+  </div>
+  <div id="myModal" class="modal">
+    <div class="modal-content">
+      <span class="close">&times;</span>
+      <h2 id="modal-heading"></h2>
+      <p id="modal-notes"></p>
+    </div>
+    >
+  </div>
+  <div id="notes-modal" class="notes-modal">
+    <div class="notes-modal-content">
+      <span class="notes-close">&times;</span>
+      <textarea id="notes-textarea"></textarea>
+      <button id="notes-save-button" class="btn btn-primary">Save</button>
+    </div>
+  </div>
+  <script>
+    const progressBar = document.getElementById("progress-bar");
+    progressBar.style.width = `${progression}%`;
+  </script>
+  <script>
+    function goToPage() {
+      window.location.href = "coursepage";
+    }
+  </script>
+  <style>
+    body {
+      background-color: #f1faee;
+    }
+  </style>
+</div>

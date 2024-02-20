@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <script>
+      const ROOM_ID = "<%= roomId %>";
+      const userName = "<%= userName%>";
+      console.log(userName);
+    </script>
+    <script src="/face-api/face-api.min.js" defer></script>
+    <script
+      src="https://cdnjs.cloudflare.com/ajax/libs/peerjs/1.4.7/peerjs.min.js"
+      defer
+    ></script>
+
+    <script src="/socket.io/socket.io.js" defer></script>
+    <script src="/Js/videocalls.js" defer></script>
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta2/css/all.min.css"
+      integrity="sha512-YWzhKL2whUzgiheMoBFwW8CKV4qpHQAEuvilg9FAn5VJUDwKZZxkJNuGM4XkWuk94WCrrwslk8yWNGmY1EduTA=="
+      crossorigin="anonymous"
+      referrerpolicy="no-referrer"
+    />
+
+    <title>Room</title>
+    <style>
+      @media (min-width: 900px) {
+        #video-grid {
+          display: grid;
+          grid-template-columns: repeat(3, minmax(400px, 1fr));
+          grid-auto-rows: minmax(300px, auto);
+          gap: 50px;
+        }
+      }
+
+      .video-container {
+        position: relative;
+        width: 100%;
+        height: 0;
+        padding-bottom: 75%; /* Set the aspect ratio (e.g., 4:3 = 75%) */
+        overflow: hidden;
+        border-radius: 10px;
+        border: 10px solid rgb(177, 175, 175);
+      }
+
+      .video-container video,
+      .video-container canvas {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+      }
+
+      .video-container video {
+        width: 100%;
+        height: 100%;
+      }
+
+      body {
+        background-image: linear-gradient(270deg, #03045e, #023e8a, #0077b6);
+        margin: 0;
+        padding: 0;
+        width: 100vw;
+        height: 100vh;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        flex-direction: column;
+      }
+
+      #controls {
+        display: flex;
+        justify-content: center;
+        margin-top: 50px;
+      }
+
+      #controls button {
+        margin: 0 10px;
+        padding: 10px 20px;
+        background-color: #fff;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="video-grid"></div>
+
+    <div id="controls">
+      <button id="mute-audio">
+        <i class="fa-solid fa-microphone fa-2xl" style="color: #0275d8"></i>
+      </button>
+      <button id="mute-video">
+        <i class="fa-solid fa-video fa-2xl" style="color: #0275d8"></i>
+      </button>
+      <button id="leave-call">
+        <i class="fa-solid fa-phone-slash fa-2xl" style="color: #d9534f" ;></i>
+      </button>
+    </div>
+  </body>
+</html>

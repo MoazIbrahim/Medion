@@ -1,0 +1,76 @@
+<div class="profile-sidebar">
+  <div class="profile=sidebar-header text-center">
+    <% if (user.type === 'Student' || user.type ==="teacherAssistant") { %>
+    <form
+      action="/profilesidebar?_method=PUT"
+      method="POST"
+      enctype="multipart/form-data"
+    >
+      <div class="pp ml-4 mt-5">
+        <label for="profilePicture">
+          <img
+            src="<%= user.profilePicture  %>"
+            alt="Avatar"
+            class="img-fluid profile-sidebar-img"
+            style="width: 100px; height: 100px"
+        /></label>
+        <i class="fa-solid fa-pen-to-square"
+          ><input type="file" name="profilePicture" id="profilePicture" hidden
+        /></i>
+      </div>
+      <button class="btn btn-success m-0">Update</button>
+    </form>
+
+    <h3 id="name" class="pb-3"><%= user.first %> <%= user.last %></h3>
+    <p id="department" class="py-3" data-i18n="<%= user.department %>">
+      t<%= user.department %>
+    </p>
+    <hr />
+    <p id="studentid" class="py-3"><%= user.username %></p>
+    <hr />
+    <div class="d-flex justify-content-center">
+      <p id="currentsemester" class="py-3"><%= user.semester %>.</p>
+      <p data-i18n="Semester" class="py-3"></p>
+    </div>
+    <div class="d-flex justify-content-center">
+      <p id="currentsemester" class="py-3"><%= user.year %>.</p>
+      <p data-i18n="Year" class="py-3"></p>
+    </div>
+    <hr />
+    <div>GPA : <%= user.gpa %></div>
+    <hr />
+    <div class="d-flex justify-content-center">
+      <p id="advisor" class="py-3" data-i18n="Advisor-std"></p>
+      <p class="py-3">: Prof. Reda Alhajj</p>
+    </div>
+    <% } else { %>
+    <form
+      action="/profilesidebar?_method=PUT"
+      method="POST"
+      enctype="multipart/form-data"
+    >
+      <div class="pp ml-4">
+        <label for="profilePicture">
+          <img
+            src="<%= user.profilePicture  %>"
+            alt="Avatar"
+            class="img-fluid profile-sidebar-img"
+            style="width: 150px; height: 150px"
+        /></label>
+        <i class="fa-solid fa-pen-to-square"
+          ><input type="file" name="profilePicture" id="profilePicture" hidden
+        /></i>
+      </div>
+      <button class="btn btn-success">Update</button>
+    </form>
+    <h3 id="name" class="py-3">Prof. <%= user.first %> <%= user.last %></h3>
+    <p id="studentid" class="py-3">ID : <%= user.username %></p>
+    <p id="advisor" class="py-3">Advisor</p>
+    <% } %>
+  </div>
+</div>
+<style>
+  .pp:hover {
+    transform: scale(1.1);
+  }
+</style>

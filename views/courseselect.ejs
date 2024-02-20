@@ -1,0 +1,686 @@
+<% layout('layouts/boilerplate') %>
+<div class="container d-flex flex-column vh-100 align-item-center my-5">
+  <h3 class="my-5">
+    <% if (user.type === 'Teacher') { %>
+    <span data-i18n="SELECT THE COURSES YOU ARE TEACHING"></span>
+    <hr />
+    <div class="d-flex justify-content-end">
+      <button id="add-course-button" class="btn btn-primary" >
+     <span data-i18n="Add a new course" class="text-white"></span>
+      </button>
+    </div>
+    <% } else { %> <span data-i18n="select-your-courses"></span>
+    <hr />
+    <% } %>
+  </h3>
+
+  <table class="table table-striped">
+    <thead>
+      <tr>
+        <th data-i18n="course-code"></th>
+        <th data-i18n="course-name"></th>
+        <th data-i18n="course-prerequisits"></th>
+        <th>Credit</th>
+        <th>Ects</th>
+        <th>Year</th>
+        <th data-i18n="course-action"></th>
+        
+      </tr>
+    </thead>
+    <tbody>
+      <% for (course of courses) { %> <% if (user.semester && user.semester ==
+      course.semester ) { %> <% if (!user.courses.includes(course._id)) { %> <%
+      const prereqsComplete = course.prereq.every(prereq =>
+      user.completedCourses.includes(prereq._id)) %>
+
+      <tr>
+        <td><%= course.code %></td>
+        <td data-i18n="<%= course.name %>">t<%= course.name %></td>
+        <td>
+          <% for (const prereq of course.prereq) { %> <%= prereq.name %> <% } %>
+        </td>
+        <td><%= course.credit %></td>
+        <td><%= course.ects %></td>
+        <td> <%= course.year %>  </td>
+        <td>
+          <% if (prereqsComplete) { %>
+          <form action="/courseselect" method="POST">
+            <button
+              class="btn btn-primary"
+              name="courseId"
+              value="<%= course._id %>"
+            >
+              +
+            </button>
+          </form>
+          <% } else { %>
+          <p data-i18n="prereq-not-completed">Prerequisites not completed</p>
+          <% } %>
+        </td>
+      </tr>
+      <% } %> <% } else if (user.type === 'Teacher') { %>
+      <tr>
+        <td><%= course.code %></td>
+        <td data-i18n="<%= course.name %>">t<%= course.name %></td>
+        <td>
+          <% for (const prereq of course.prereq) { %>
+          <form
+            action="/courseselect/<%= course._id %>/prereq?_method=DELETE"
+            method="POST"
+          >
+            <button
+              class="btn btn-danger"
+              name="prereqId"
+              value="<%= prereq._id %>"
+            
+            >
+               <span class="booo text-white" data-i18n="<%= prereq.name %>" > t<%= prereq.name %>   </span> <span class="text-white">&times;</span>
+            </button>
+          </form>
+          <% } %>
+        </td>
+        <td><%= course.credit %></td>
+        <td><%= course.ects %></td>
+        <td> <%= course.year %>  </td>
+        <td>
+          <div class="d-flex flex-row">
+            <form action="/courseselect" method="POST">
+              <button
+                class="btn btn-primary"
+                name="courseId"
+                value="<%= course._id %>"
+              >
+                +
+              </button>
+            </form>
+            <button
+              class="btn btn-md btn-info ml-1"
+              style="max-height: 40px"
+              data-target="modify-course-modal"
+              id="modify-course-button"
+            >
+              <i class="fa-solid fa-pen-to-square"></i>
+            </button>
+            <button
+              class="btn btn-md btn-info ml-1"
+              style="max-height: 40px"
+              data-target="modify-req-modal"
+              id="modify-req-button"
+            >
+              <i class="fa-solid fa-r"></i>
+            </button>
+            <div id="add-course-modal" class="modal">
+              <div class="cmodal-content d-flex flex-column">
+                <span class="close ml-auto">&times;</span>
+                <form class="mt-4" action="/courseselect/add" method="POST">
+                  <div class="input-group mb-3">
+                    <label class="form-label" for="code">Code</label>
+                    <input
+                      class="form-control"
+                      type="text"
+                      id="code"
+                      name="code"
+                      required
+                    />
+                  </div>
+                  <div class="input-group mb-3">
+                    <label class="form-label" for="name">Name</label>
+                    <input
+                      class="form-control"
+                      type="text"
+                      id="name"
+                      name="name"
+                      required
+                    />
+                  </div>
+                  <div class="input-group mb-3">
+                    <label class="form-label" for="mainCourse">Type</label>
+                    <select
+                      class="form-control"
+                      name="mainCourse"
+                      id="mainCourse"
+                    >
+                      <option value="true">Main</option>
+                      <option value="false">Elective</option>
+                    </select>
+                  </div>
+                  <div class="input-group mb-3">
+                    <label class="form-label" for="credit">Credit</label>
+                    <input
+                      class="form-control"
+                      type="text"
+                      id="credit"
+                      name="credit"
+                      required
+                    />
+                  </div>
+                  <div class="input-group mb-3">
+                    <label class="form-label" for="ects">Ects</label>
+                    <input
+                      class="form-control"
+                      type="text"
+                      id="ects"
+                      name="ects"
+                      required
+                    />
+                  </div>
+                  <div class="input-group mb-3">
+                    <label class="form-label" for="semester">Semester</label>
+                    <select class="form-control" name="semester" id="semester">
+                      <option value="Fall">Fall</option>
+                      <option value="Spring">Spring</option>
+                     
+                    </select>
+                  </div>
+                  <div class="input-group mb-3">
+                    <label class="form-label" for="year">Year</label>
+                    <select class="form-control" name="year" id="year">
+                      <option value="1">1</option>
+                      <option value="2">2</option>
+                      <option value="3">3</option>
+                      <option value="4">4</option>
+                   
+                    </select>
+                  </div>
+                  <div class="input-group mb-3">
+                    <label class="form-label" for="department"
+                      >Department</label
+                    >
+                    <select
+                      class="form-control"
+                      name="department"
+                      id="department"
+                    >
+                      <option value="Computer Engineering">
+                        Computer Engineering
+                      </option>
+                      <option value="Biomedical Engineering">
+                        Biomedical Engineering
+                      </option>
+                      <option value="Electrical Engineering">
+                        Electrical Engineering
+                      </option>
+                      <option value="Industrial Engineering">
+                        Industrial Engineering
+                      </option>
+                      <option value="Civil Engineering">
+                        Civil Engineering
+                      </option>
+                    </select>
+                  </div>
+                  <div class="input-group mb-3 d-flex">
+                    <div style="flex: 1; margin-right: 10px">
+                      <label class="form-label" for="day">Day</label>
+                      <select class="form-control" id="day" name="day">
+                        <option value="Mon">Monday</option>
+                        <option value="Tue">Tuesday</option>
+                        <option value="Wed">Wednesday</option>
+                        <option value="Thu">Thursday</option>
+                        <option value="Fri">Friday</option>
+                        <option value="Sat">Saturday</option>
+                        <option value="Sun">Sunday</option>
+                      </select>
+                    </div>
+                    <div style="flex: 1; margin-left: 10px">
+                      <label class="form-label" for="time">Time</label>
+                      <select class="form-control" id="time" name="time">
+                        <option value="09:00-11:00">09:00-11:00</option>
+                        <option value="10:00-12:00">10:00-12:00</option>
+                        <option value="11:00-13:00">11:00-13:00</option>
+                        <option value="12:00-14:00">12:00-14:00</option>
+                        <option value="13:00-15:00">13:00-15:00</option>
+                        <option value="14:00-16:00">14:00-16:00</option>
+                        <option value="15:00-17:00">15:00-17:00</option>
+                      </select>
+                    </div>
+                  </div>
+                  <div class="input-group mb-3 d-flex">
+                    <div style="flex: 1; margin-right: 10px">
+                      <label class="form-label" for="startDate"
+                        >Start Date</label
+                      >
+                      <select
+                        class="form-control"
+                        id="startDate"
+                        name="startDate"
+                      >
+                        <option value="2023-09-20">20 / 09</option>
+                        <option value="2023-02-20">20 / 02</option>
+                      </select>
+                    </div>
+                    <div style="flex: 1; margin-left: 10px">
+                      <label class="form-label" for="endDate">endDate</label>
+                      <select class="form-control" id="endDate" name="endDate">
+                        <option value="2023-01-30">30 / 01</option>
+                        <option value="2023-06-30">30 / 06</option>
+                      </select>
+                    </div>
+                  </div>
+                  <div class="input-group mb-3 d-flex">
+                    <div style="flex: 1; margin-right: 10px">
+                      <label class="form-label" for="midterm"
+                        >Midterm (%)</label
+                      >
+                      <input
+                        class="form-control"
+                        type="number"
+                        id="midterm"
+                        name="midterm"
+                      />
+                    </div>
+                    <div style="flex: 1; margin-left: 10px; margin-right: 10px">
+                      <label class="form-label" for="final">Final (%)</label>
+                      <input
+                        class="form-control"
+                        type="number"
+                        id="final"
+                        name="final"
+                      />
+                    </div>
+                    <div style="flex: 1; margin-left: 10px">
+                      <label class="form-label" for="project"
+                        >Project (%)</label
+                      >
+                      <input
+                        class="form-control"
+                        type="number"
+                        id="project"
+                        name="project"
+                      />
+                    </div>
+                    <div style="flex: 1; margin-left: 10px">
+                      <label class="form-label" for="assignments"
+                        >Assignments (%)</label
+                      >
+                      <input
+                        class="form-control"
+                        type="number"
+                        id="assignments"
+                        name="assignments"
+                      />
+                    </div>
+                    <div style="flex: 1; margin-left: 10px">
+                      <label class="form-label" for="quizzes"
+                        >Quizzes (%)</label
+                      >
+                      <input
+                        class="form-control"
+                        type="number"
+                        id="quizzes"
+                        name="quizzes"
+                      />
+                    </div>
+                    <div style="flex: 1; margin-left: 10px">
+                      <label class="form-label" for="labs">Labs (%)</label>
+                      <input
+                        class="form-control"
+                        type="number"
+                        id="labs"
+                        name="labs"
+                      />
+                    </div>
+                    <div style="flex: 1; margin-left: 10px">
+                      <label class="form-label" for="attendance"
+                        >Attendance (%)</label
+                      >
+                      <input
+                        class="form-control"
+                        type="number"
+                        id="attendance"
+                        name="attendance"
+                      />
+                    </div>
+                    <div style="flex: 1; margin-left: 10px">
+                      <label class="form-label" for="bonus">Bonus (%)</label>
+                      <input
+                        class="form-control"
+                        type="number"
+                        id="bonus"
+                        name="bonus"
+                      />
+                    </div>
+                  </div>
+                  <div class="input-group mb-3"></div>
+                  <button class="btn btn-success">Add</button>
+                </form>
+              </div>
+            </div>
+            <div id="modify-course-modal" class="modal">
+              <div class="cmodal-content d-flex flex-column">
+                <span class="close ml-auto">&times;</span>
+                <form
+                  class="mt-4"
+                  action="/courseselect/<%= course._id %>?_method=PUT"
+                  method="POST"
+                >
+                  <div class="input-group mb-3">
+                    <label class="form-label" for="name">Name</label>
+                    <input
+                      class="form-control"
+                      type="text"
+                      id="name"
+                      name="name"
+                      value="<%= course.name %>"
+                    />
+                  </div>
+                  <div class="input-group mb-3">
+                    <label class="form-label" for="mainCourse">Type</label>
+                    <select
+                      class="form-control"
+                      name="mainCourse"
+                      id="mainCourse"
+                    >
+                      <option value="true"<% if(course.mainCourse===true){ %> selected <%}%>>Main</option>
+                      <option value="false"<% if(course.mainCourse===false){ %> selected <%}%>>Elective</option>
+                    </select>
+                  </div>
+                  <div class="input-group mb-3">
+                    <label class="form-label" for="credit">Credit</label>
+                    <input
+                      class="form-control"
+                      type="text"
+                      id="credit"
+                      name="credit"
+                      value=" <%= course.credit %> "
+                    />
+                  </div>
+                  <div class="input-group mb-3">
+                    <label class="form-label" for="ects">Ects</label>
+                    <input
+                      class="form-control"
+                      type="text"
+                      id="ects"
+                      name="ects"
+                      value=" <%= course.ects %> "
+                    />
+                  </div>
+                  <div class="input-group mb-3">
+                    <label class="form-label" for="semester">Semester</label>
+                    <select
+                      class="form-control"
+                      name="semester"
+                      id="semester"
+                      value="<%= course.semester %>"
+                    >
+                      <option value="Fall" <% if(course.semester==='Fall'){ %> selected <%}%>>Fall</option>
+                      <option value="Spring" <% if(course.semester==='Spring'){ %> selected <%}%>>Spring </option>
+                      
+                    </select>
+                  </div>
+                  <div class="input-group mb-3">
+                    <label class="form-label" for="year">Year</label>
+                    <select
+                      class="form-control"
+                      name="year"
+                      id="year"
+                      value="<%= course.year %>"
+                    >
+                      <option value="1" <% if(course.year===1){ %> selected <%}%>>1 </option>
+                      <option value="2" <% if(course.year===2){ %> selected <%}%>>2 </option>
+                      <option value="3"<% if(course.year===3){ %> selected <%}%>>3 </option>
+                      <option value="4"<% if(course.year===4){ %> selected <%}%>>4</option>
+                      
+                    </select>
+                  </div>
+                  <div class="input-group mb-3">
+                    <label class="form-label" for="department"
+                      >Department</label
+                    >
+                    <select
+                      class="form-control"
+                      name="department"
+                      id="department"
+                    >
+                      <option value="Computer Engineering">
+                        Computer Engineering
+                      </option>
+                      <option value="Biomedical Engineering">
+                        Biomedical Engineering
+                      </option>
+                      <option value="Electrical Engineering">
+                        Electrical Engineering
+                      </option>
+                      <option value="Industrial Engineering">
+                        Industrial Engineering
+                      </option>
+                      <option value="Civil Engineering">
+                        Civil Engineering
+                      </option>
+                    </select>
+                  </div>
+                  <div class="input-group mb-3 d-flex">
+                    <div style="flex: 1; margin-right: 10px">
+                      <label class="form-label" for="day">Day</label>
+                      <select class="form-control" id="day" name="day">
+                        <option value="Mon"<% if(course.time.day==='Mon'){ %> selected <%}%>>Monday</option>
+                        <option value="Tue"<% if(course.time.day==='Tue'){ %> selected <%}%>>Tuesday</option>
+                        <option value="Wed"<% if(course.time.day==='Wed'){ %> selected <%}%>>Wednesday</option>
+                        <option value="Thu"<% if(course.time.day==='Thu'){ %> selected <%}%>>Thursday</option>
+                        <option value="Fri"<% if(course.time.day==='Fri'){ %> selected <%}%>>Friday</option>
+                        <option value="Sat"<% if(course.time.day==='Sat'){ %> selected <%}%>>Saturday</option>
+                        <option value="Sun"<% if(course.time.day==='Sun'){ %> selected <%}%>>Sunday</option>
+                      </select>
+                    </div>
+                    <div style="flex: 1; margin-left: 10px">
+                      <label class="form-label" for="time">Time</label>
+                      <select class="form-control" id="time" name="time">
+                        <option value="09:00-11:00"<% if(course.time.time==='09:00-11:00'){ %> selected <%}%>>09:00-11:00</option>
+                        <option value="10:00-12:00"<% if(course.time.time==='10:00-12:00'){ %> selected <%}%>>10:00-12:00</option>
+                        <option value="11:00-13:00"<% if(course.time.time==='11:00-13:00'){ %> selected <%}%>>11:00-13:00</option>
+                        <option value="12:00-14:00"<% if(course.time.time==='12:00-14:00'){ %> selected <%}%>>12:00-14:00</option>
+                        <option value="13:00-15:00"<% if(course.time.time==='13:00-15:00'){ %> selected <%}%>>13:00-15:00</option>
+                        <option value="14:00-16:00"<% if(course.time.time==='14:00-16:00'){ %> selected <%}%>>14:00-16:00</option>
+                        <option value="15:00-17:00"<% if(course.time.time==='15:00-17:00'){ %> selected <%}%>>15:00-17:00</option>
+                      </select>
+                    </div>
+                  </div>
+                  <div class="input-group mb-3 d-flex">
+                    <div style="flex: 1; margin-right: 10px">
+                      <label class="form-label" for="startDate"
+                        >Start Date</label
+                      >
+                      <select
+                        class="form-control"
+                        id="startDate"
+                        name="startDate"
+                      >
+                      <option value="2023-09-20"<% if(course.startDate==='2023-09-20'){ %> selected <%}%>>20/09</option>
+                      <option value="2023-02-20"<% if(course.startDate==='2023-02-20'){ %> selected <%}%>>20/02</option>
+                 
+                      </select>
+                    </div>
+                    <div style="flex: 1; margin-left: 10px">
+                      <label class="form-label" for="endDate">endDate</label>
+                      <select class="form-control" id="endDate" name="endDate">
+                        <option value="2023-01-30"<% if(course.endDate==='2023-01-30'){ %> selected <%}%>>30/01</option>
+                        <option value="2023-06-30"<% if(course.endDate==='2023-06-30'){ %> selected <%}%>>30/06</option>
+             
+                      </select>
+                    </div>
+                  </div>
+                  <div class="input-group mb-3 d-flex">
+                    <div style="flex: 1; margin-right: 10px">
+                      <label class="form-label" for="midterm"
+                        >Midterm (%)</label
+                      >
+                      <input
+                        class="form-control"
+                        type="number"
+                        id="midterm"
+                        name="midterm"
+                        value="<%= course.syllabus.midterm %>"
+                      />
+                    </div>
+                    <div style="flex: 1; margin-left: 10px; margin-right: 10px">
+                      <label class="form-label" for="final">Final (%)</label>
+                      <input
+                        class="form-control"
+                        type="number"
+                        id="final"
+                        name="final"
+                        value="<%= course.syllabus.final %>"
+                      />
+                    </div>
+                    <div style="flex: 1; margin-left: 10px">
+                      <label class="form-label" for="project"
+                        >Project (%)</label
+                      >
+                      <input
+                        class="form-control"
+                        type="number"
+                        id="project"
+                        name="project"
+                        value="<%= course.syllabus.project %>"
+                      />
+                    </div>
+                    <div style="flex: 1; margin-left: 10px">
+                      <label class="form-label" for="assignments"
+                        >Assignments (%)</label
+                      >
+                      <input
+                        class="form-control"
+                        type="number"
+                        id="assignments"
+                        name="assignments"
+                        value="<%= course.syllabus.assignments %>"
+                      />
+                    </div>
+                    <div style="flex: 1; margin-left: 10px">
+                      <label class="form-label" for="quizzes"
+                        >Quizzes (%)</label
+                      >
+                      <input
+                        class="form-control"
+                        type="number"
+                        id="quizzes"
+                        name="quizzes"
+                        value="<%= course.syllabus.quizzes %>"
+                      />
+                    </div>
+                    <div style="flex: 1; margin-left: 10px">
+                      <label class="form-label" for="labs">Labs (%)</label>
+                      <input
+                        class="form-control"
+                        type="number"
+                        id="labs"
+                        name="labs"
+                        value="<%= course.syllabus.labs %>"
+                      />
+                    </div>
+                    <div style="flex: 1; margin-left: 10px">
+                      <label class="form-label" for="attendance"
+                        >Attendance (%)</label
+                      >
+                      <input
+                        class="form-control"
+                        type="number"
+                        id="attendance"
+                        name="attendance"
+                        value="<%= course.syllabus.attendace %>"
+                      />
+                    </div>
+                    <div style="flex: 1; margin-left: 10px">
+                      <label class="form-label" for="bonus">Bonus (%)</label>
+                      <input
+                        class="form-control"
+                        type="number"
+                        id="bonus"
+                        name="bonus"
+                        value="<%= course.syllabus.bonus %>"
+                      />
+                    </div>
+                  </div>
+                  <div class="input-group mb-3"></div>
+                  <button class="btn btn-success">Save</button>
+                </form>
+              </div>
+            </div>
+            <div id="modify-req-modal" class="modal">
+              <div
+                class="cmodal-content d-flex justify-content-center align-items-center text-center flex-column"
+              >
+                <span class="close ml-auto">&times;</span>
+                <form
+                  action="/courseselect/<%= course._id %>/prereq?_method=PUT"
+                  method="POST"
+                >
+                  <select class="form-control" name="prereq" id="prereq">
+                    <% for (course of courses){ %>
+                    <option value="<%=course._id%>"><%=course.name%></option>
+                    <% } %>
+                  </select>
+                  <br />
+                  <hr />
+                  <button class="btn btn-info mt-3">Add Prerequisite</button>
+                </form>
+              </div>
+            </div>
+          </div>
+        </td>
+      </tr>
+      <% } %> <% } %>
+    </tbody>
+  </table>
+</div>
+
+<style>
+  body {
+    background-color: #f1faee;
+  }
+</style>
+<script>
+  const addCourseBtns = document.querySelectorAll("#add-course-button");
+  const modifyCourseBtns = document.querySelectorAll("#modify-course-button");
+  const modifyReqBtns = document.querySelectorAll("#modify-req-button");
+  const addCourseModals = document.querySelectorAll("#add-course-modal");
+  const modifyCourseModals = document.querySelectorAll("#modify-course-modal");
+  const modifyReqModals = document.querySelectorAll("#modify-req-modal");
+  const closeAddModals = document.querySelectorAll(".close");
+
+  addCourseBtns.forEach((btn, index) => {
+    const addCourseModal = addCourseModals[index];
+    btn.addEventListener("click", () => {
+      addCourseModal.style.display = "block";
+    });
+    closeAddModals[2 * index].addEventListener("click", () => {
+      addCourseModal.style.display = "none";
+    });
+    window.addEventListener("click", (event) => {
+      if (event.target == addCourseModal) {
+        addCourseModal.style.display = "none";
+      }
+    });
+  });
+
+  modifyCourseBtns.forEach((btn, index) => {
+    const modifyCourseModal = modifyCourseModals[index];
+    btn.addEventListener("click", () => {
+      modifyCourseModal.style.display = "block";
+    });
+    closeAddModals[2 * index + 1].addEventListener("click", () => {
+      modifyCourseModal.style.display = "none";
+    });
+    window.addEventListener("click", (event) => {
+      if (event.target == modifyCourseModal) {
+        modifyCourseModal.style.display = "none";
+      }
+    });
+  });
+
+  modifyReqBtns.forEach((btn, index) => {
+    const modifyReqModal = modifyReqModals[index];
+    btn.addEventListener("click", () => {
+      modifyReqModal.style.display = "block";
+    });
+    closeAddModals[2 * index + 2].addEventListener("click", () => {
+      modifyReqModal.style.display = "none";
+    });
+    window.addEventListener("click", (event) => {
+      if (event.target == modifyReqModal) {
+        modifyReqModal.style.display = "none";
+      }
+    });
+  });
+
+
+</script>

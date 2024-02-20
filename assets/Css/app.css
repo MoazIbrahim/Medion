@@ -1,0 +1,129 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@500;600;700');
+
+
+body {
+    font-family: "Poppins", sans-serif;
+    font-size: 1rem;
+    line-height: 1.5;
+    color: #333;
+    margin: 0;
+    padding: 0;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+    font-weight: bold;
+   
+}
+
+h1 {
+    font-size: 2.5rem;
+    margin-bottom: 1.5rem;
+}
+
+h2 {
+    font-size: 2rem;
+    margin-bottom: 1.25rem;
+}
+
+h3 {
+    font-size: 1.75rem;
+    margin-bottom: 1rem;
+    color: black;
+}
+
+p {
+    margin-bottom: 1.5rem;
+}
+
+ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+
+
+.navbar {
+    background-color: #333;
+}
+
+.navbar-brand {
+    font-size: 1.5rem;
+    font-weight: bold;
+}
+
+.nav-link {
+    font-size: 0.95rem;
+    font-weight: bold;
+    color: #fff;
+    padding: 0.5rem 1rem;
+    transition: all 0.3s ease;
+}
+
+.nav-link:hover {
+    color: #333;
+}
+
+
+
+
+.my-5 {
+    margin-top: 3rem;
+    margin-bottom: 3rem;
+}
+
+
+.col-md-4 {
+    border-left: 1px solid #ccc;
+}
+
+h3 {
+    margin-top: 0;
+    color: black;
+}
+
+a {
+    color: #333;
+}
+
+a:hover {
+    text-decoration: none;
+    color: #007bff;
+}
+
+#comment-container {
+    border-bottom: thick #757777;
+    padding: 20px;
+    background: #e9c46a;
+    border-radius: 10px;
+    box-shadow: rgba(50, 50, 93, 0.25) 0px 6px 12px -2px, rgba(0, 0, 0, 0.3) 0px 3px 7px -3px;
+}
+
+#wow-container {
+    right: 0;
+    left: 0;
+    bottom: 0;
+    border-bottom: thick #757777;
+    padding: 20px;
+    background: #c6d6c1;
+    border-radius: 10px;
+    box-shadow: rgba(50, 50, 93, 0.25) 0px 6px 12px -2px, rgba(0, 0, 0, 0.3) 0px 3px 7px -3px;
+}
+
+
+.date {
+    font-size: 12px;
+}
+
+.comment-text {
+    margin-top: 30px;
+    font-size: 17px;
+    font-weight: bold;
+    line-height: 1.2rem;
+    color: black;
+    letter-spacing: 1px;
+}

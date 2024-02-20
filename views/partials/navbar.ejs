@@ -1,0 +1,143 @@
+<nav class="navbar navbar-expand-sm navbar-light gradcolor sticky-top">
+  <a class="navbar-brand text-white" href="/home"
+    ><img
+      src="/noavatar.png"
+      alt=""
+      class="img-fluid"
+      width="60px"
+      height="60px"
+  /></a>
+  <button
+    class="navbar-toggler"
+    type="button"
+    data-toggle="collapse"
+    data-target="#navbarSupportedContent"
+    aria-controls="navbarSupportedContent"
+    aria-expanded="false"
+    aria-label="Toggle navigation"
+  >
+    <span class="navbar-toggler-icon"></span>
+  </button>
+
+  <div class="collapse navbar-collapse" id="navbarSupportedContent">
+    <ul class="navbar-nav mr-auto">
+      <li class="nav-item">
+        <a
+          class="nav-link text-white ml-5 xd"
+          href="https://sens.medipol.edu.tr"
+          >SENS<span class="sr-only"></span
+        ></a>
+      </li>
+      <li class="nav-item">
+        <a
+          class="nav-link text-white ml-5 xd"
+          href="https://mebis.medipol.edu.tr"
+          >MEBIS</a
+        >
+      </li>
+      <li class="nav-item">
+        <a
+          class="nav-link text-white ml-5 xd"
+          data-i18n="calendar-navbar"
+          href="/calendar"
+        ></a>
+      </li>
+      <li class="nav-item dropdown">
+        <a
+          class="nav-link dropdown-toggle text-white ml-5 xd"
+          href="#"
+          id="navbarDropdown"
+          role="button"
+          data-toggle="dropdown"
+          aria-haspopup="true"
+          aria-expanded="false"
+          data-i18n="courses-navbar"
+        >
+        </a>
+        <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+          <a
+            class="dropdown-item"
+            data-i18n="courses-mycourses-navbar"
+            href="/mycourses"
+          ></a>
+          <a
+            class="dropdown-item"
+            data-i18n="courses-selectcourses-navbar"
+            href="courseselect"
+          ></a>
+          <div class="dropdown-divider"></div>
+          <a
+            class="dropdown-item"
+            data-i18n="courses-coursecurriculum-navbar"
+            href="coursecurriculum"
+          ></a>
+        </div>
+      </li>
+      <% if (user.type==='Admin') {%>
+      <li class="nav-item">
+        <a class="nav-link text-white ml-5 xd" href="/admin/users">Users</a>
+      </li>
+      <% } %>
+    </ul>
+    <div class="icon d-flex align-items-center">
+      <li class="nav-item dropdown mb-3 mr-3 text-center">
+        <a
+          class="nav-link dropdown-toggle text-white ml-5 xd"
+          href="#"
+          id="navbarDropdownLang"
+          role="button"
+          data-toggle="dropdown"
+          aria-haspopup="true"
+          aria-expanded="false"
+        >
+          <i class="fa-solid fa-globe fa-2xl"></i>
+        </a>
+        <div class="dropdown-menu" aria-labelledby="navbarDropdownLang">
+          <button class="lang-button dropdown-item" id="tr">
+            <img
+              src="https://upload.wikimedia.org/wikipedia/commons/thumb/b/b4/Flag_of_Turkey.svg/800px-Flag_of_Turkey.svg.png?20210808085121"
+              alt=""
+              style="width: 50px"
+            />
+            Turkish
+          </button>
+          <button class="lang-button dropdown-item" id="en">
+            <img
+              src="https://upload.wikimedia.org/wikipedia/commons/thumb/8/83/Flag_of_the_United_Kingdom_%283-5%29.svg/177px-Flag_of_the_United_Kingdom_%283-5%29.svg.png?20230507105257"
+              alt=""
+              style="width: 50px"
+            />
+            English
+          </button>
+          <button class="lang-button dropdown-item" id="ar">
+            <img
+              src="https://upload.wikimedia.org/wikipedia/commons/thumb/0/0d/Flag_of_Saudi_Arabia.svg/800px-Flag_of_Saudi_Arabia.svg.png?20230323235445"
+              alt=""
+              style="width: 50px"
+            />
+            Arabic
+          </button>
+        </div>
+      </li>
+
+      <a href="/logout">
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          viewBox="0 0 512 512"
+          height="35"
+          width="35"
+          class="mr-2"
+        >
+          <!--! Font Awesome Pro 6.3.0 by @fontawesome - https://fontawesome.com  License - https://fontawesome.com/license (Commercial License) Copyright 2023 Fonticons, Inc. -->
+          <path
+            class="logoutbut"
+            fill="white"
+            d="M377.9 105.9L500.7 228.7c7.2 7.2 11.3 17.1 11.3 27.3s-4.1 20.1-11.3 27.3L377.9 406.1c-6.4 6.4-15 9.9-24 9.9c-18.7 0-33.9-15.2-33.9-33.9l0-62.1-128 0c-17.7 0-32-14.3-32-32l0-64c0-17.7 14.3-32 32-32l128 0 0-62.1c0-18.7 15.2-33.9 33.9-33.9c9 0 17.6 3.6 24 9.9zM160 96L96 96c-17.7 0-32 14.3-32 32l0 256c0 17.7 14.3 32 32 32l64 0c17.7 0 32 14.3 32 32s-14.3 32-32 32l-64 0c-53 0-96-43-96-96L0 128C0 75 43 32 96 32l64 0c17.7 0 32 14.3 32 32s-14.3 32-32 32z"
+          />
+        </svg>
+      </a>
+    </div>
+  </div>
+</nav>
+
+<script></script>

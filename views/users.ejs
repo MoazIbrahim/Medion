@@ -1,0 +1,21 @@
+<% layout('layouts/boilerplate') %>
+<div class="container">
+  <% for ( usy of users ) { %>
+  <div class="card mx-3" style="width: 18rem">
+    <img src="<%= usy.profilePicture  %>" class="card-img-top" alt="..." />
+    <div class="card-body">
+      <h5 class="card-title"><%= usy.first %> <%= usy.last %></h5>
+      <p class="card-text"><%= usy.username %></p>
+      <p class="card-text"><%= usy.type %></p>
+    </div>
+    <ul class="list-group list-group-flush">
+      <li class="list-group-item"><%= usy.semester %></li>
+      <li class="list-group-item"><%= usy.year %></li>
+      <li class="list-group-item"><%= usy.department %></li>
+    </ul>
+    <div class="card-body">
+      <a href="/edit/<%= usy._id  %>" class="card-link">Edit</a>
+    </div>
+  </div>
+  <% } %>
+</div>
